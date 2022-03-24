@@ -32,7 +32,7 @@ exports.jwtPassport = passport.use(
         return done(err, false);
       }
       if (user) {
-        if (!user.status) {
+        if (user.isLock == 1) {
           // Inactivate
           return done(null, false);
         }

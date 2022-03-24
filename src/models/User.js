@@ -9,23 +9,29 @@ const User = new Schema(
       require: true,
       unique: true,
     },
-    username:{
+    username: {
       type: String,
-    },
-    password: {
-      type: String,
+      default: null,
     },
     name: {
       type: String,
+      default: null,
+    },
+    password: {
+      type: String,
+      default: null,
     },
     avatarUrl: {
       type: String,
+      default: null,
     },
     googleId: {
       type: String,
+      default: null,
     },
     facebookId: {
       type: String,
+      default: null,
     },
     isVip: {
       type: Number,
@@ -41,9 +47,11 @@ const User = new Schema(
     },
     forgotPasswordCode: {
       type: String,
+      default: null,
     },
     activationCode: {
       type: String,
+      default: null,
     },
   },
   {

@@ -11,14 +11,15 @@ class AuthController {
       user &&
       (await bcrypt.compare(req.body.password, user ? user.password : ""))
     ) {
-      if (!user.status)
+      console.log(user.activationCode);
+      if (user.isLock == 1)
         return res.json({
           status: res.statusCode,
           success: false,
           message:
             "Your account has been disabled. Please contact the administrator.",
         });
-      if (user.activationCode != "" && user.activationCode !== undefined)
+      if (user.activationCode != "" && user.activationCode !== undefined && user.activationCode !== null)
         return res.json({
           status: res.statusCode,
           success: false,
