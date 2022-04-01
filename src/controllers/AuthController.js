@@ -5,7 +5,7 @@ const authenticate = require("../authenticate");
 
 class AuthController {
   // [POST] /auth/login
-  async login(req, res, next) {
+  async login(req, res) {
     const user = await User.findOne({ email: req.body.email });
     if (
       user &&
@@ -19,7 +19,11 @@ class AuthController {
           message:
             "Your account has been disabled. Please contact the administrator.",
         });
-      if (user.activationCode != "" && user.activationCode !== undefined && user.activationCode !== null)
+      if (
+        user.activationCode != "" &&
+        user.activationCode !== undefined &&
+        user.activationCode !== null
+      )
         return res.json({
           status: res.statusCode,
           success: false,
@@ -47,7 +51,7 @@ class AuthController {
   }
 
   // [POST] /auth/register
-  async register(req, res, next) {
+  async register(req, res) {
     const email = req.body.email;
     const password = req.body.password;
     if (validator.validate(email) === false)

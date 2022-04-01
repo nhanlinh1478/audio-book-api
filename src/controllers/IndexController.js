@@ -1,5 +1,5 @@
 class IndexController {
-  index(req, res, next) {
+  index(req, res) {
     res.send("Hello world!");
   }
 }

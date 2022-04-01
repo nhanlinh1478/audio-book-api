@@ -1,6 +1,6 @@
 const passport = require("passport");
-const FacebookTokenStrategy = require("passport-facebook-token");
-const GoogleTokenStrategy = require("passport-google-token").Strategy;
+// const FacebookTokenStrategy = require("passport-facebook-token");
+// const GoogleTokenStrategy = require("passport-google-token").Strategy;
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken");
