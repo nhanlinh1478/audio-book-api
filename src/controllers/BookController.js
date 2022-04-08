@@ -16,5 +16,13 @@ class BookController {
     const bookAction = new BookAction();
     return res.send(await bookAction.create(req, res));
   }
+  async update(req, res) {
+    const bookAction = new BookAction();
+    return res.send(await bookAction.update(req, res));
+  }
+  async delete(req, res) {
+    const bookAction = new BookAction();
+    return res.send(await bookAction.delete(req, res));
+  }
 }
 module.exports = new BookController();

@@ -15,17 +15,18 @@ router.post(
   adminMiddleware.requiredAdmin,
   bookController.create
 );
-// router.put(
-//   "/:bookId",
-//   authenticate.verifyUser,
-//   adminMiddleware.requiredAdmin,
-//   bookController.update
-// );
-// router.delete(
-//   "/:bookId",
-//   authenticate.verifyUser,
-//   adminMiddleware.requiredAdmin,
-//   bookController.delete
-// );
+router.put(
+  "/:bookId",
+  upload.single("thumbnail"),
+  authenticate.verifyUser,
+  adminMiddleware.requiredAdmin,
+  bookController.update
+);
+router.delete(
+  "/:bookId",
+  authenticate.verifyUser,
+  adminMiddleware.requiredAdmin,
+  bookController.delete
+);
 
 module.exports = router;

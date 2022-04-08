@@ -38,4 +38,54 @@ module.exports = class BookAction {
       data: newBook,
     });
   }
+
+  // [PUT] /books/:bookId
+  async update(req, res) {
+    const bookId = req.params.bookId;
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return JSON.stringify({
+        code: res.statusCode,
+        success: false,
+        message: "Book not found.",
+      });
+    }
+    const uploadStr = `data:${
+      req.file.mimetype
+    };base64,${req.file.buffer.toString("base64")}`;
+    const uploadResponse = await cloudinary.uploader.upload(uploadStr);
+    book.name = req.body.name;
+    book.description = req.body.description;
+    book.author = req.body.author;
+    book.isVip = req.body.isVip;
+    book.prices = req.body.prices;
+    book.channel = req.body.channel;
+    book.thumbnail = uploadResponse.url;
+    book.save();
+    return JSON.stringify({
+      code: res.statusCode,
+      success: true,
+      message: "Update book successfully.",
+      data: book,
+    });
+  }
+
+  // [PUT] /books/:bookId
+  async delete(req, res) {
+    const bookId = req.params.bookId;
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return JSON.stringify({
+        code: res.statusCode,
+        success: false,
+        message: "Book not found.",
+      });
+    }
+    book.remove();
+    return JSON.stringify({
+      code: res.statusCode,
+      success: true,
+      message: "Delete book successfully.",
+    });
+  }
 };
