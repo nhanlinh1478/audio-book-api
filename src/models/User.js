@@ -13,11 +13,11 @@ const User = new Schema(
       type: String,
       default: null,
     },
-    name: {
+    password: {
       type: String,
       default: null,
     },
-    password: {
+    name: {
       type: String,
       default: null,
     },
@@ -34,12 +34,12 @@ const User = new Schema(
       default: null,
     },
     isVip: {
-      type: Number,
-      default: 0, // 0: false, 1: true
+      type: Date,
+      default: Date.now(),
     },
     isAdmin: {
       type: Number,
-      default: 0, // 0: false | 1: true
+      default: 0, // 0: false | 1: true | -1: Super Admin
     },
     isLock: {
       type: Number,

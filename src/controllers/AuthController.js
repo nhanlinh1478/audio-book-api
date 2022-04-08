@@ -1,89 +1,76 @@
-const User = require("../models/User");
-const validator = require("email-validator");
-const bcrypt = require("bcrypt");
-const authenticate = require("../authenticate");
+const Auth = require("../logical/auth");
 
 class AuthController {
-  // [POST] /auth/login
-  async login(req, res) {
-    const user = await User.findOne({ email: req.body.email });
-    if (
-      user &&
-      (await bcrypt.compare(req.body.password, user ? user.password : ""))
-    ) {
-      console.log(user.activationCode);
-      if (user.isLock == 1)
-        return res.json({
-          status: res.statusCode,
-          success: false,
-          message:
-            "Your account has been disabled. Please contact the administrator.",
-        });
-      if (
-        user.activationCode != "" &&
-        user.activationCode !== undefined &&
-        user.activationCode !== null
-      )
-        return res.json({
-          status: res.statusCode,
-          success: false,
-          message:
-            "Your account has not been activated. Please double-check your email.",
-        });
-      const jwt = authenticate.getToken(user);
-      user.password = undefined;
-      res.json({
-        code: res.statusCode,
-        success: true,
-        message: "",
-        data: {
-          user,
-          jwt,
-        },
-      });
-    } else {
-      res.json({
-        code: res.statusCode,
-        success: false,
-        message: "Incorrect email or password",
-      });
-    }
-  }
-
-  // [POST] /auth/register
-  async register(req, res) {
+  // [POST] /auth/SignIn
+  async SignIn(req, res) {
+    const auth = new Auth();
     const email = req.body.email;
     const password = req.body.password;
-    if (validator.validate(email) === false)
-      return res.json({
-        code: res.statusCode,
-        success: false,
-        message: "Email address is invalid",
-      });
-    if (!password)
-      return res.json({
-        code: res.statusCode,
-        success: false,
-        message: "Empty password",
-      });
+    const code = res.statusCode;
+    return res.send(await auth.SignIn(email, password, code));
+  }
 
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.json({
-        code: res.statusCode,
-        success: false,
-        message: "The email already exists!",
-      });
-    }
+  // [POST] /auth/SignUp
+  async SignUp(req, res) {
+    const auth = new Auth();
+    const email = req.body.email;
+    const password = req.body.password;
+    const code = res.statusCode;
+    return res.send(await auth.SignUp(email, password, code));
+  }
 
-    const newUser = new User(req.body);
-    newUser.password = bcrypt.hashSync(req.body.password, 10);
-    await newUser.save();
-    return res.json({
-      code: res.statusCode,
-      success: true,
-      message: "Successful account registration.",
-    });
+  // Admin [POST] /auth/login
+  async Login(req, res) {
+    const auth = new Auth();
+    const email = req.body.email;
+    const password = req.body.password;
+    const code = res.statusCode;
+    return res.send(await auth.Login(email, password, code));
+  }
+
+  // [POST] /auth/ForgotPassword
+  async ForgotPassword(req, res) {
+    const auth = new Auth();
+    const email = req.body.email;
+    const code = res.statusCode;
+    return res.send(await auth.ForgotPassword(email, code));
+  }
+
+  // [GET] /auth/CheckForgotPasswordCode/:forgotPasswordCode
+  async CheckForgotPasswordCode(req, res) {
+    const auth = new Auth();
+    const forgotPasswordCode = req.params.forgotPasswordCode;
+    const code = res.statusCode;
+    return res.send(
+      await auth.CheckForgotPasswordCode(forgotPasswordCode, code)
+    );
+  }
+
+  // [POST] /auth/ResetPassword/:forgotPasswordCode
+  async ResetPassword(req, res) {
+    const auth = new Auth();
+    const forgotPasswordCode = req.params.forgotPasswordCode;
+    const password = req.body.password;
+    const code = res.statusCode;
+    return res.send(
+      await auth.ResetPassword(forgotPasswordCode, password, code)
+    );
+  }
+
+  // [POST] /auth/ReActivationAccount
+  async ReActivationAccount(req, res) {
+    const auth = new Auth();
+    const email = req.body.email;
+    const code = res.statusCode;
+    return res.send(await auth.ReActivationAccount(email, code));
+  }
+
+  // [GET] /auth/CheckActivationCode/:activationCode
+  async CheckActivationCode(req, res) {
+    const auth = new Auth();
+    const activationCode = req.params.activationCode;
+    const code = res.statusCode;
+    return res.send(await auth.CheckActivationCode(activationCode, code));
   }
 }
 
