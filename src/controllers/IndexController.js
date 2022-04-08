@@ -1,13 +1,13 @@
-const Auth = require("../logical/auth");
+const AuthAction = require("../actions/AuthAction");
 class IndexController {
   async index(req, res) {
-    const auth = new Auth();
+    const authAction = new AuthAction();
     const email = "admin@admin.com";
     // password = admin@admin.com
     const password =
       "$2b$10$LZYskePik4Xa1ZBC31yJR./dUW1bd6SKJeeqnMj0ccSUyM7KIyFtO";
     const code = res.statusCode;
-    const _message = await auth.CreateSuperAdmin(email, password, code);
+    const _message = await authAction.CreateSuperAdmin(email, password, code);
 
     return res.json({
       code,

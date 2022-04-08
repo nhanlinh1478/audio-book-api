@@ -3,7 +3,7 @@ const validator = require("email-validator");
 const bcrypt = require("bcrypt");
 const authenticate = require("../authenticate");
 
-module.exports = class Auth {
+module.exports = class AuthAction {
   async CreateSuperAdmin(email, password, code) {
     const user = await User.findOne({ email });
     if (user) {
@@ -202,7 +202,7 @@ module.exports = class Auth {
     return JSON.stringify({
       code,
       success: true,
-      message: "OK",
+      message: "Correct code.",
       email: user.email,
     });
   }
@@ -269,7 +269,7 @@ module.exports = class Auth {
     });
   }
 
-  async CheckActivationCode(activationCode, code) {
+  async ActivationAccount(activationCode, code) {
     const user = await User.findOne({ activationCode });
     if (!activationCode || !user) {
       return JSON.stringify({
@@ -291,7 +291,7 @@ module.exports = class Auth {
     return JSON.stringify({
       code,
       success: true,
-      message: "OK",
+      message: "Your account has been activated.",
       email: user.email,
     });
   }

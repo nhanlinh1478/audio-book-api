@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const cors = require("cors");
 const morgan = require("morgan");
 const express = require("express");
@@ -21,10 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-require('./authenticate');
+require("./authenticate");
 db.connect();
 route(app);
 
 app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+  console.log(`Server is running on port ${port}`);
+  console.log(`http://localhost:${port}`);
 });

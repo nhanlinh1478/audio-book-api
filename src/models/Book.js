@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
-
+const slug = require("mongoose-slug-generator");
+mongoose.plugin(slug);
 const Schema = mongoose.Schema;
-
 const Book = new Schema(
   {
     name: {
       type: String,
       default: null,
     },
+    slug: { type: String, slug: "name", default: null, unique: true },
     description: {
       type: String,
       default: null,
@@ -25,7 +26,7 @@ const Book = new Schema(
       type: Boolean,
       default: false,
     },
-    cost: {
+    prices: {
       type: Number,
       default: 0,
     },

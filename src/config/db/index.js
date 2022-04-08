@@ -4,9 +4,10 @@ const { MONGODB_URL } = require("../env");
 async function connect() {
   try {
     await mongoose.connect(MONGODB_URL);
-    console.log("Connect to MongoDB");
+    console.log("MongoDB connected...");
   } catch (error) {
-    console.log("Error connecting to Mongo: ", error);
+    console.log("MongoDB connection error...");
+    console.log(error);
   }
 }
 

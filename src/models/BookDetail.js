@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-
+const slug = require("mongoose-slug-generator");
+mongoose.plugin(slug);
 const Schema = mongoose.Schema;
 
 const BookDetail = new Schema(
@@ -13,6 +14,7 @@ const BookDetail = new Schema(
       type: String,
       default: null,
     },
+    slug: { type: String, slug: "name", default: null, unique: true },
     url: {
       type: String,
       default: null,

@@ -11,6 +11,6 @@ router.get("/CheckForgotPasswordCode/:forgotPasswordCode", authController.CheckF
 router.post("/ResetPassword/:forgotPasswordCode", authController.ResetPassword);
 
 router.post("/ReActivationAccount", authController.ReActivationAccount);
-router.get("/CheckActivationCode/:activationCode", authController.CheckActivationCode);
+router.get("/ActivationAccount/:activationCode", authController.ActivationAccount);
 
 module.exports = router;
