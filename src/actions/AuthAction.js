@@ -2,16 +2,13 @@ const User = require("../models/User");
 const validator = require("email-validator");
 const bcrypt = require("bcrypt");
 const authenticate = require("../authenticate");
+const { userDTO } = require("../dto/user.dto");
 
 module.exports = class AuthAction {
   async CreateSuperAdmin(email, password, code) {
     const user = await User.findOne({ email });
     if (user) {
-      return JSON.stringify({
-        code,
-        success: false,
-        message: "The email already exists!",
-      });
+      return JSON.stringify({});
     }
     const newUser = new User({
       email,
@@ -49,14 +46,14 @@ module.exports = class AuthAction {
           message:
             "Your account has not been activated. Please double-check your email.",
         });
-      const jwt = authenticate.getToken(user);
-      user.password = undefined;
+      const userDataTransferObject = userDTO(user);
+      const jwt = authenticate.getToken(userDataTransferObject);
       return JSON.stringify({
         code,
         success: true,
         message: "",
         data: {
-          user,
+          user: userDataTransferObject,
           jwt,
         },
       });
@@ -134,14 +131,14 @@ module.exports = class AuthAction {
             "You are not authorized to access this resource. Please contact the administrator.",
         });
       }
-      const jwt = authenticate.getToken(user);
-      user.password = undefined;
+      const userDataTransferObject = userDTO(user);
+      const jwt = authenticate.getToken(userDataTransferObject);
       return JSON.stringify({
         code,
         success: true,
         message: "",
         data: {
-          user,
+          user: userDataTransferObject,
           jwt,
         },
       });

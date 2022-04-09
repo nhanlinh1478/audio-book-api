@@ -1,7 +1,6 @@
 const Category = require("../models/Category");
 
 module.exports = class CategoryAction {
-  // [GET] /categories
   async findAll(code) {
     const categories = await Category.find();
     return JSON.stringify({
@@ -13,6 +12,13 @@ module.exports = class CategoryAction {
   }
   async findOne(categoryId, code) {
     const category = await Category.findById(categoryId);
+    if (!category) {
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Category not found.",
+      });
+    }
     return JSON.stringify({
       code,
       success: true,
@@ -35,6 +41,14 @@ module.exports = class CategoryAction {
   }
   async update(categoryId, name, description, code) {
     const category = await Category.findById(categoryId);
+    if (!category) {
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Category not found.",
+      });
+    }
+
     category.name = name;
     category.description = description;
     const updatedCategory = await category.save();
@@ -47,6 +61,13 @@ module.exports = class CategoryAction {
   }
   async delete(categoryId, code) {
     const category = await Category.findById(categoryId);
+    if (!category) {
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Category not found.",
+      });
+    }
     await category.remove();
     return JSON.stringify({
       code,

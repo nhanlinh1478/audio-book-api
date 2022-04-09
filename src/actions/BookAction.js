@@ -2,7 +2,6 @@ const Book = require("../models/Book");
 const { cloudinary } = require("../utils/cloundinary");
 
 module.exports = class BookAction {
-  // [GET] /books
   async findAll(code) {
     const books = await Book.find();
     return JSON.stringify({
@@ -12,9 +11,17 @@ module.exports = class BookAction {
       data: books,
     });
   }
-  // [GET] /books/:bookId
+
   async findOne(bookId, code) {
     const book = await Book.findById(bookId);
+    if (!book) {
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Book not found.",
+      });
+    }
+
     return JSON.stringify({
       code,
       success: true,
@@ -22,7 +29,7 @@ module.exports = class BookAction {
       data: book,
     });
   }
-  // [POST] /books
+
   async create(req, res) {
     const newBook = new Book(req.body);
     const uploadStr = `data:${
@@ -39,10 +46,10 @@ module.exports = class BookAction {
     });
   }
 
-  // [PUT] /books/:bookId
   async update(req, res) {
     const bookId = req.params.bookId;
     const book = await Book.findById(bookId);
+
     if (!book) {
       return JSON.stringify({
         code: res.statusCode,
@@ -70,20 +77,18 @@ module.exports = class BookAction {
     });
   }
 
-  // [PUT] /books/:bookId
-  async delete(req, res) {
-    const bookId = req.params.bookId;
+  async delete(bookId, code) {
     const book = await Book.findById(bookId);
     if (!book) {
       return JSON.stringify({
-        code: res.statusCode,
+        code,
         success: false,
         message: "Book not found.",
       });
     }
     book.remove();
     return JSON.stringify({
-      code: res.statusCode,
+      code,
       success: true,
       message: "Delete book successfully.",
     });
