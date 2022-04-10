@@ -1,9 +1,11 @@
 const Book = require("../models/Book");
 const { cloudinary } = require("../utils/cloundinary");
+const isURL = require("isurl");
+const isBase64 = require("is-base64");
 
 module.exports = class BookAction {
   async findAll(code) {
-    const books = await Book.find();
+    const books = await Book.find().populate("categoryId");
     return JSON.stringify({
       code,
       success: true,
@@ -13,7 +15,7 @@ module.exports = class BookAction {
   }
 
   async findOne(bookId, code) {
-    const book = await Book.findById(bookId);
+    const book = await Book.findById(bookId).populate("categoryId");
     if (!book) {
       return JSON.stringify({
         code,
@@ -21,7 +23,6 @@ module.exports = class BookAction {
         message: "Book not found.",
       });
     }
-
     return JSON.stringify({
       code,
       success: true,
@@ -32,11 +33,13 @@ module.exports = class BookAction {
 
   async create(req, res) {
     const newBook = new Book(req.body);
-    const uploadStr = `data:${
-      req.file.mimetype
-    };base64,${req.file.buffer.toString("base64")}`;
-    const uploadResponse = await cloudinary.uploader.upload(uploadStr);
-    newBook.thumbnail = uploadResponse.url;
+    const thumbnail = req.body.thumbnail;
+    if (isURL(thumbnail) == true) {
+      newBook.thumbnail = thumbnail;
+    } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
+      const uploadResponse = await cloudinary.uploader.upload(thumbnail);
+      newBook.thumbnail = uploadResponse.url;
+    }
     newBook.save();
     return JSON.stringify({
       code: res.statusCode,
@@ -57,17 +60,23 @@ module.exports = class BookAction {
         message: "Book not found.",
       });
     }
-    const uploadStr = `data:${
-      req.file.mimetype
-    };base64,${req.file.buffer.toString("base64")}`;
-    const uploadResponse = await cloudinary.uploader.upload(uploadStr);
+
     book.name = req.body.name;
-    book.description = req.body.description;
     book.author = req.body.author;
+    book.categoryId = req.body.categoryId;
     book.isVip = req.body.isVip;
     book.prices = req.body.prices;
+    book.description = req.body.description;
     book.channel = req.body.channel;
-    book.thumbnail = uploadResponse.url;
+
+    const thumbnail = req.body.thumbnail;
+    if (isURL(thumbnail) == true) {
+      book.thumbnail = thumbnail;
+    } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
+      const uploadResponse = await cloudinary.uploader.upload(thumbnail);
+      book.thumbnail = uploadResponse.url;
+    }
+
     book.save();
     return JSON.stringify({
       code: res.statusCode,
