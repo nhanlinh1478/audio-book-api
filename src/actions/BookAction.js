@@ -1,6 +1,7 @@
 const Book = require("../models/Book");
 const { cloudinary } = require("../utils/cloundinary");
-const isURL = require("isurl");
+const { validURL } = require("../utils/helper");
+
 const isBase64 = require("is-base64");
 
 module.exports = class BookAction {
@@ -34,10 +35,12 @@ module.exports = class BookAction {
   async create(req, res) {
     const newBook = new Book(req.body);
     const thumbnail = req.body.thumbnail;
-    if (isURL(thumbnail) == true) {
+    if (validURL(thumbnail) == true) {
       newBook.thumbnail = thumbnail;
     } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
-      const uploadResponse = await cloudinary.uploader.upload(thumbnail);
+      const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
+        resource_type: "image",
+      });
       newBook.thumbnail = uploadResponse.url;
     }
     newBook.save();
@@ -70,10 +73,12 @@ module.exports = class BookAction {
     book.channel = req.body.channel;
 
     const thumbnail = req.body.thumbnail;
-    if (isURL(thumbnail) == true) {
+    if (validURL(thumbnail) == true) {
       book.thumbnail = thumbnail;
     } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
-      const uploadResponse = await cloudinary.uploader.upload(thumbnail);
+      const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
+        resource_type: "image",
+      });
       book.thumbnail = uploadResponse.url;
     }
 

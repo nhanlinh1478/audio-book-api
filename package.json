@@ -21,8 +21,6 @@
     "email-validator": "^2.0.4",
     "eslint": "^8.12.0",
     "express": "^4.17.3",
-    "is-base64": "^1.1.0",
-    "isurl": "^4.0.2",
     "lodash": "^4.17.21",
     "method-override": "^3.0.0",
     "mongoose": "^6.2.8",
@@ -33,8 +31,7 @@
     "passport": "^0.5.2",
     "passport-facebook-token": "^4.0.0",
     "passport-google-token": "^0.1.2",
-    "passport-jwt": "^4.0.0",
-    "streamifier": "^0.1.1"
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {}
 }

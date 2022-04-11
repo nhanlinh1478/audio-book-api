@@ -9,9 +9,14 @@ const Bookmark = new Schema(
       ref: "User",
       default: null,
     },
-    bookDetailId: {
+    bookId: {
       type: Schema.Types.ObjectId,
-      ref: "BookDetail",
+      ref: "Book",
+      default: null,
+    },
+    audioId: {
+      type: Schema.Types.ObjectId,
+      ref: "Audio",
       default: null,
     },
   },

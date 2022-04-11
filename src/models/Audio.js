@@ -3,7 +3,7 @@ const slug = require("mongoose-slug-generator");
 mongoose.plugin(slug);
 const Schema = mongoose.Schema;
 
-const BookDetail = new Schema(
+const Audio = new Schema(
   {
     bookId: {
       type: Schema.Types.ObjectId,
@@ -14,7 +14,6 @@ const BookDetail = new Schema(
       type: String,
       default: null,
     },
-    slug: { type: String, slug: "name", default: null, unique: true },
     url: {
       type: String,
       default: null,
@@ -25,4 +24,4 @@ const BookDetail = new Schema(
   }
 );
 
-module.exports = mongoose.model("BookDetail", BookDetail);
+module.exports = mongoose.model("Audio", Audio);
