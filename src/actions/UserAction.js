@@ -102,7 +102,8 @@ module.exports = class UserAction {
       });
     }
 
-    user.name = body.name;
+    user.username = body.username;
+    user.isVip = body.isVip;
     if (user.email != "admin@admin.com") {
       user.isAdmin = body.isAdmin;
       user.isLock = body.isLock;
