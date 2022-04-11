@@ -2,8 +2,6 @@ const Book = require("../models/Book");
 const { cloudinary } = require("../utils/cloundinary");
 const { validURL } = require("../utils/helper");
 
-const isBase64 = require("is-base64");
-
 module.exports = class BookAction {
   async findAll(code) {
     const books = await Book.find().populate("categoryId");
@@ -37,7 +35,7 @@ module.exports = class BookAction {
     const thumbnail = req.body.thumbnail;
     if (validURL(thumbnail) == true) {
       newBook.thumbnail = thumbnail;
-    } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
+    } else {
       const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
         resource_type: "image",
       });
@@ -75,7 +73,7 @@ module.exports = class BookAction {
     const thumbnail = req.body.thumbnail;
     if (validURL(thumbnail) == true) {
       book.thumbnail = thumbnail;
-    } else if (isBase64(thumbnail, { mimeRequired: true }) == true) {
+    } else {
       const uploadResponse = await cloudinary.uploader.upload(thumbnail, {
         resource_type: "image",
       });
