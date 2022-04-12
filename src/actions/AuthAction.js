@@ -3,6 +3,9 @@ const validator = require("email-validator");
 const bcrypt = require("bcrypt");
 const authenticate = require("../authenticate");
 const { userDTO } = require("../dto/user.dto");
+const mailer = require("../utils/mailer");
+const { activationMail, forgotPasswordMail } = require("../utils/mailTemplate");
+const { CLIENT_URL } = require("../config/env");
 
 module.exports = class AuthAction {
   async CreateSuperAdmin(email, password, code) {
@@ -93,13 +96,29 @@ module.exports = class AuthAction {
     newUser.password = bcrypt.hashSync(password, 10);
     newUser.activationCode = Math.random().toString(36).slice(2);
     await newUser.save();
+
     // send email
-    return JSON.stringify({
-      code,
-      success: true,
-      message:
-        "Successful account registration. An email has been sent to your email address. Please check.",
-    });
+
+    const activationLink =
+      CLIENT_URL + `/auth/activation?activationCode=${newUser.activationCode}`;
+
+    const html = activationMail(activationLink);
+    try {
+      await mailer.sendMail(email, "Confirm your AudioBook account", html);
+      return JSON.stringify({
+        code,
+        success: true,
+        message:
+          "Successful account registration. An email has been sent to your email address. Please check.",
+      });
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Failed to send email",
+      });
+    }
   }
 
   async Login(email, password, code) {
@@ -172,11 +191,27 @@ module.exports = class AuthAction {
     user.forgotPasswordCode = Math.random().toString(36).slice(2);
     await user.save();
     // send email
-    return JSON.stringify({
-      code,
-      success: true,
-      message: "An email has been sent to your email address. Please check.",
-    });
+
+    const resetPasswordLink =
+      CLIENT_URL +
+      `/auth/reset_password?forgotPasswordCode=${user.forgotPasswordCode}`;
+
+    const html = forgotPasswordMail(resetPasswordLink);
+    try {
+      await mailer.sendMail(email, "Reset Password your AudioBook account", html);
+      return JSON.stringify({
+        code,
+        success: true,
+        message: "An email has been sent to your email address. Please check.",
+      });
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Failed to send email",
+      });
+    }
   }
 
   async CheckForgotPasswordCode(forgotPasswordCode, code) {
@@ -259,11 +294,26 @@ module.exports = class AuthAction {
     user.activationCode = Math.random().toString(36).slice(2);
     await user.save();
     // send email
-    return JSON.stringify({
-      code,
-      success: true,
-      message: "An email has been sent to your email address. Please check.",
-    });
+
+    const activationLink =
+      CLIENT_URL + `/auth/activation?activationCode=${user.activationCode}`;
+
+    const html = activationMail(activationLink);
+    try {
+      await mailer.sendMail(email, "Confirm your AudioBook account", html);
+      return JSON.stringify({
+        code,
+        success: true,
+        message: "An email has been sent to your email address. Please check.",
+      });
+    } catch (error) {
+      console.log(error);
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Failed to send email",
+      });
+    }
   }
 
   async ActivationAccount(activationCode, code) {
