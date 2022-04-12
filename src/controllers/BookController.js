@@ -14,7 +14,7 @@ class BookController {
     const code = res.statusCode;
     return res.send(await bookAction.findAllBookInCategory(categoryId, code));
   }
-  // [GET] /books/:slug
+  // [GET] /books/slug/:slug
   async findOneBySlug(req, res) {
     const bookAction = new BookAction();
     const slug = req.params.slug;

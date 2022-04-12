@@ -9,7 +9,7 @@ const upload = multer();
 
 router.get("/", bookController.findAll);
 router.get("/category/:categoryId", bookController.findAllBookInCategory);
-router.get("/:slug", bookController.findOneBySlug);
+router.get("slug/:slug", bookController.findOneBySlug);
 router.get("/:bookId", bookController.findOne);
 router.post(
   "/",
