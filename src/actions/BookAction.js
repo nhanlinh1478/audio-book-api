@@ -12,7 +12,32 @@ module.exports = class BookAction {
       data: books,
     });
   }
+  async findAllBookInCategory(categoryId, code) {
+    const books = await Book.find({ categoryId }).populate("categoryId");
+    return JSON.stringify({
+      code,
+      success: true,
+      message: "Get book list successfully.",
+      data: books,
+    });
+  }
 
+  async findOneBySlug(slug, code) {
+    const book = await Book.findOne({ slug }).populate("categoryId");
+    if (!book) {
+      return JSON.stringify({
+        code,
+        success: false,
+        message: "Book not found.",
+      });
+    }
+    return JSON.stringify({
+      code,
+      success: true,
+      message: "Get book successfully.",
+      data: book,
+    });
+  }
   async findOne(bookId, code) {
     const book = await Book.findById(bookId).populate("categoryId");
     if (!book) {

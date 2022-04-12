@@ -7,6 +7,20 @@ class BookController {
     const code = res.statusCode;
     return res.send(await bookAction.findAll(code));
   }
+  // [GET] /books/category/:categoryId
+  async findAllBookInCategory(req, res) {
+    const bookAction = new BookAction();
+    const categoryId = req.params.categoryId;
+    const code = res.statusCode;
+    return res.send(await bookAction.findAllBookInCategory(categoryId, code));
+  }
+  // [GET] /books/:slug
+  async findOneBySlug(req, res) {
+    const bookAction = new BookAction();
+    const slug = req.params.slug;
+    const code = res.statusCode;
+    return res.send(await bookAction.findOneBySlug(slug, code));
+  }
   // [GET] /books/:bookId
   async findOne(req, res) {
     const bookAction = new BookAction();
