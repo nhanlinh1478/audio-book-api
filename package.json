@@ -4,8 +4,9 @@
   "description": "audio-book-api",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js",
+    "test": "mocha --timeout 10000",
     "lint": "eslint ."
   },
   "repository": "https://github.com/Team02-DACNPM/audio-book-api",
@@ -14,6 +15,8 @@
   "private": false,
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "cloudinary": "^1.29.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -23,6 +26,7 @@
     "express": "^4.17.3",
     "lodash": "^4.17.21",
     "method-override": "^3.0.0",
+    "mocha": "^9.2.2",
     "mongoose": "^6.2.8",
     "mongoose-slug-generator": "^1.0.4",
     "morgan": "^1.10.0",
