@@ -1,24 +1,24 @@
-const passport = require("passport");
+const passport = require('passport');
 // const FacebookTokenStrategy = require("passport-facebook-token");
 // const GoogleTokenStrategy = require("passport-google-token").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJWT = require("passport-jwt").ExtractJwt;
-const jwt = require("jsonwebtoken");
-const env = require("./config/env");
-const User = require("./models/User");
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJWT = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken');
+const env = require('./webAPI/config/env');
+const User = require('./applicationData/entities/user');
 
 passport.serializeUser(function (user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 passport.deserializeUser(function (user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 exports.getToken = function (user) {
-  return jwt.sign(user, env.JWT_SECRET, {
-    expiresIn: 604800, // 1 week
-  });
+    return jwt.sign(user.toJSON(), env.JWT_SECRET, {
+        expiresIn: 604800, // 1 week
+    });
 };
 
 const opts = {};
@@ -26,24 +26,24 @@ opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = env.JWT_SECRET;
 
 exports.jwtPassport = passport.use(
-  new JwtStrategy(opts, (jwt_payload, done) => {
-    User.findById(jwt_payload._id, (err, user) => {
-      if (err) {
-        return done(err, false);
-      }
-      if (user) {
-        if (user.isLock == 1) {
-          // Inactivate
-          return done(null, false);
-        }
-        //OK
-        return done(null, user);
-      } else {
-        // Not User
-        return done(null, false);
-      }
-    });
-  })
+    new JwtStrategy(opts, (jwt_payload, done) => {
+        User.findById(jwt_payload._id, (err, user) => {
+            if (err) {
+                return done(err, false);
+            }
+            if (user) {
+                if (user.isLock == 1) {
+                    // Inactivate
+                    return done(null, false);
+                }
+                //OK
+                return done(null, user);
+            } else {
+                // Not User
+                return done(null, false);
+            }
+        });
+    }),
 );
 
 // exports.googlePassport = passport.use(
@@ -116,4 +116,4 @@ exports.jwtPassport = passport.use(
 //   session: false,
 // });
 
-exports.verifyUser = passport.authenticate("jwt", { session: false });
+exports.verifyUser = passport.authenticate('jwt', { session: false });
