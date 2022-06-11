@@ -1,0 +1,72 @@
+version: "3.7"
+services:
+  # website
+  website:
+    build:
+      context: ../audio-book-website
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - audio-book-network
+    volumes:
+      - ../audio-book-website:/usr/app
+      - /usr/app/node_modules
+      - /usr/app/.next
+    depends_on:
+      - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NEXT_PUBLIC_CONTAINER_API_URL=http://api:8000
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    stdin_open: true
+    tty: true
+  # admin
+  admin:
+    build:
+      context: ../audio-book-admin
+      dockerfile: Dockerfile
+    ports:
+      - 3001:3001
+    networks:
+      - audio-book-network
+    volumes:
+      - ../audio-book-admin:/usr/app
+      - /usr/app/node_modules
+      - /usr/app/.next
+    depends_on:
+      - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    stdin_open: true
+    tty: true
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - audio-book-network
+    volumes:
+      - ./:/usr/app
+      - /usr/app/node_modules
+    environment:
+      - MONGODB_URL=mongodb+srv://dacnpm0218:dacnpm.02@cluster0.0upk7.mongodb.net/dacnpm-dev
+      - JWT_SECRET=002-2312-123921-293123-djaowd-239jd12
+      - PORT=8000
+      - GOOGLE_CLIENT_ID=
+      - GOOGLE_CLIENT_SECRET=
+      - FACEBOOK_CLIENT_ID=
+      - FACEBOOK_CLIENT_SECRET=
+      - GMAIL_EMAIL=dacnpm.02.18@gmail.com
+      - GMAIL_PASSWORD=dacnpm.02
+      - CLIENT_URL=http://localhost:3000
+      - CLOUDINARY_API_KEY=131247184462336
+      - CLOUDINARY_API_SECRET=lJXSmM7sj8Hb_3zD7t2xbYPGjqA
+      - CLOUDINARY_NAME=dacnpm-02-18
+networks:
+  audio-book-network:
+    driver: bridge
