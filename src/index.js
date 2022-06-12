@@ -9,6 +9,7 @@ const process = require('process');
 
 const db = require('./webAPI/config/db');
 const route = require('./webAPI/routers');
+const { job } = require('./applicationCore/scheduleJobs');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -28,6 +29,7 @@ route(app);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log(`http://localhost:${port}`);
+    job();
 });
 
 module.exports = app;

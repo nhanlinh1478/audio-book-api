@@ -1,5 +1,5 @@
 const Book = require('../../applicationData/entities/book');
-const { validURL, cloudinaryUploader } = require('../common/myUltility');
+const { validURL, cloudinaryUploader, loggingEvent } = require('../common/myUltility');
 const ServiceResult = require('../common/serviceResult');
 const {
     NOT_FOUND,
@@ -21,6 +21,9 @@ module.exports = class BookService {
             .populate('categoryId')
             .skip(itemsPerPage * currentPage - itemsPerPage)
             .limit(itemsPerPage);
+
+        loggingEvent(books, 'READ_MANY', 'BOOK', true, null, null, '', null);
+
         return new ServiceResult(true, READ_MANY, {
             pagination: {
                 pageNum: Number(currentPage),
@@ -39,6 +42,9 @@ module.exports = class BookService {
             .populate('categoryId')
             .skip(itemsPerPage * currentPage - itemsPerPage)
             .limit(itemsPerPage);
+
+        loggingEvent(books, 'READ_MANY', 'BOOK', true, null, null, '', null);
+
         return new ServiceResult(true, READ_MANY, {
             pagination: {
                 pageNum: Number(currentPage),
@@ -52,15 +58,21 @@ module.exports = class BookService {
     async findOneBySlug(slug) {
         const book = await Book.findOne({ slug }).populate('categoryId');
         if (!book) {
+            loggingEvent(book, 'READ', 'BOOK', false, slug, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
+
+        loggingEvent(book, 'READ', 'BOOK', true, book._id, null, '', null);
         return new ServiceResult(true, READ_ONE, { book });
     }
+
     async findOne(bookId) {
         const book = await Book.findById(bookId).populate('categoryId');
         if (!book) {
+            loggingEvent(book, 'READ', 'BOOK', false, bookId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
+        loggingEvent(book, 'READ', 'BOOK', true, bookId, null, '', null);
         return new ServiceResult(true, READ_ONE, { book });
     }
 
@@ -73,6 +85,8 @@ module.exports = class BookService {
             newBook.thumbnail = await cloudinaryUploader(thumbnail, 'image');
         }
         await newBook.save();
+        loggingEvent(newBook, 'CREATE', 'BOOK', true, newBook._id, null, '', newBook);
+
         return new ServiceResult(true, CREATE, { newBook });
     }
 
@@ -81,6 +95,7 @@ module.exports = class BookService {
         const book = await Book.findById(bookId);
 
         if (!book) {
+            loggingEvent(book, 'UPDATE', 'BOOK', false, bookId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
 
@@ -100,15 +115,20 @@ module.exports = class BookService {
         }
 
         await book.save();
+        loggingEvent(book, 'UPDATE', 'BOOK', true, bookId, null, '', null);
+
         return new ServiceResult(true, UPDATE, { book });
     }
 
     async delete(bookId) {
         const book = await Book.findById(bookId);
         if (!book) {
+            loggingEvent(book, 'DELETE', 'BOOK', false, bookId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
         await book.remove();
+        loggingEvent(book, 'DELETE', 'BOOK', true, bookId, null, '', null);
+
         return new ServiceResult(true, DELETE);
     }
 };

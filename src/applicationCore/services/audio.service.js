@@ -1,5 +1,5 @@
 const Audio = require('../../applicationData/entities/audio');
-const { validURL, cloudinaryUploader } = require('../common/myUltility');
+const { validURL, cloudinaryUploader, loggingEvent } = require('../common/myUltility');
 const ServiceResult = require('../common/serviceResult');
 const {
     NOT_FOUND,
@@ -21,6 +21,8 @@ module.exports = class AudioService {
             .populate('bookId')
             .skip(itemsPerPage * currentPage - itemsPerPage)
             .limit(itemsPerPage);
+
+        loggingEvent(audios, 'READ_MANY', 'AUDIO', true, null, null, '', null);
         return new ServiceResult(true, READ_MANY, {
             pagination: {
                 pageNum: Number(currentPage),
@@ -34,8 +36,10 @@ module.exports = class AudioService {
     async findOneAudio(bookId, audioId) {
         const audio = await Audio.findOne({ bookId, _id: audioId }).populate('bookId');
         if (!audio) {
+            loggingEvent(audio, 'READ', 'AUDIO', false, audioId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
+        loggingEvent(audio, 'READ', 'AUDIO', true, audioId, null, '', null);
         return new ServiceResult(true, READ_ONE, { audio });
     }
     async createAudio(req) {
@@ -50,6 +54,8 @@ module.exports = class AudioService {
         }
 
         await newAudio.save();
+        loggingEvent(newAudio, 'CREATE', 'AUDIO', true, newAudio._id, null, '', newAudio);
+
         return new ServiceResult(true, CREATE, { newAudio });
     }
     async updateAudio(req) {
@@ -58,6 +64,7 @@ module.exports = class AudioService {
         const audio = await Audio.findOne({ bookId, _id: audioId });
 
         if (!audio) {
+            loggingEvent(audio, 'UPDATE', 'AUDIO', false, audioId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
 
@@ -71,14 +78,17 @@ module.exports = class AudioService {
         }
 
         await audio.save();
+        loggingEvent(audio, 'UPDATE', 'AUDIO', true, audioId, null, '', null);
         return new ServiceResult(true, UPDATE, { audio });
     }
     async deleteAudio(bookId, audioId) {
         const audio = await Audio.findOne({ bookId, _id: audioId });
         if (!audio) {
+            loggingEvent(audio, 'DELETE', 'AUDIO', false, audioId, null, '404', null);
             return new ServiceResult(false, NOT_FOUND);
         }
         await audio.remove();
+        loggingEvent(audio, 'DELETE', 'AUDIO', true, audioId, null, '', null);
         return new ServiceResult(true, DELETE);
     }
 };

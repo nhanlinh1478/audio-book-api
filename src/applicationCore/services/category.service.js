@@ -9,6 +9,7 @@ const {
     DELETE,
     ITEMS_PER_PAGE,
 } = require('../common/applicationConstant');
+const { loggingEvent } = require('../common/myUltility');
 
 module.exports = class CategoryService {
     async findAll(pageSize, pageNum) {
@@ -19,6 +20,9 @@ module.exports = class CategoryService {
         const categories = await Category.find()
             .skip(itemsPerPage * currentPage - itemsPerPage)
             .limit(itemsPerPage);
+
+        loggingEvent(categories, 'READ_MANY', 'CATEGORY', true, null, null, '', null);
+
         return new ServiceResult(true, READ_MANY, {
             pagination: {
                 pageNum: Number(currentPage),
@@ -31,8 +35,11 @@ module.exports = class CategoryService {
     async findOne(categoryId) {
         const category = await Category.findById(categoryId);
         if (!category) {
+            loggingEvent(category, 'READ', 'CATEGORY', false, categoryId, null, '404', null);
+
             return new ServiceResult(false, NOT_FOUND);
         }
+        loggingEvent(category, 'READ', 'CATEGORY', true, categoryId, null, '', null);
         return new ServiceResult(true, READ_ONE, { category });
     }
     async create(name, description) {
@@ -41,25 +48,35 @@ module.exports = class CategoryService {
             description,
         });
         await category.save();
+        loggingEvent(category, 'CREATE', 'CATEGORY', true, category._id, null, '', category);
+
         return new ServiceResult(true, CREATE, { category });
     }
     async update(categoryId, name, description) {
         const category = await Category.findById(categoryId);
         if (!category) {
+            loggingEvent(category, 'UPDATE', 'CATEGORY', false, categoryId, null, '404', null);
+
             return new ServiceResult(false, NOT_FOUND);
         }
 
         category.name = name;
         category.description = description;
         await category.save();
+
+        loggingEvent(category, 'UPDATE', 'CATEGORY', true, categoryId, null, '', null);
+
         return new ServiceResult(true, UPDATE, { category });
     }
     async delete(categoryId) {
         const category = await Category.findById(categoryId);
         if (!category) {
+            loggingEvent(category, 'DELETE', 'CATEGORY', false, categoryId, null, '404', null);
+
             return new ServiceResult(false, NOT_FOUND);
         }
         await category.remove();
+        loggingEvent(category, 'DELETE', 'CATEGORY', true, categoryId, null, '', null);
         return new ServiceResult(true, DELETE);
     }
 };
