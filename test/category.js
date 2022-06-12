@@ -10,8 +10,6 @@ const server = require('../src/index');
 let should = chai.should();
 let token = '';
 const Book = require('../src/models/Book');
-
-chai.use(chaiHttp);
 //Our parent block
 //describe('Category', () => {
 // beforeEach((done) => {
@@ -19,7 +17,16 @@ chai.use(chaiHttp);
 //     Book.deleteMany({}, (err) => {
 //         done();
 //     });
+// });//Our parent block
+//describe('Category', () => {
+// beforeEach((done) => {
+//     //Before each test we empty the database
+//     Book.deleteMany({}, (err) => {
+//         done();
+//     });
 // });
+chai.use(chaiHttp);
+
 describe('Category', () => {
     beforeEach((done) => {
         //Before each test we empty the database
