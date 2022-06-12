@@ -13,6 +13,13 @@ const Book = require('../src/models/Book');
 
 chai.use(chaiHttp);
 //Our parent block
+//describe('Category', () => {
+// beforeEach((done) => {
+//     //Before each test we empty the database
+//     Book.deleteMany({}, (err) => {
+//         done();
+//     });
+// });
 describe('Category', () => {
     beforeEach((done) => {
         //Before each test we empty the database
