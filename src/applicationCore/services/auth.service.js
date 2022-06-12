@@ -18,6 +18,7 @@ const {
     PASSWORD_RESET,
     SEND_MAIL,
 } = require('../common/applicationConstant');
+const { loggingEvent } = require('../common/myUltility');
 
 module.exports = class AuthService {
     async CreateSuperAdmin(email, password) {
@@ -33,6 +34,8 @@ module.exports = class AuthService {
             forgotPasswordCode: '',
         });
         await newUser.save();
+        loggingEvent(newUser, 'CREATE', 'USER', true, null, null, 'first create super admin', newUser);
+
         return new ServiceResult(true, ADMIN_CREATE);
     }
 
@@ -40,14 +43,20 @@ module.exports = class AuthService {
         const user = await User.findOne({ email });
         if (user && (await bcrypt.compare(password, user ? user.password : ''))) {
             if (user.isLock == 1) {
+                loggingEvent(user, 'SIGN_IN', 'USER', false, user._id, null, 'user is locked', null);
                 return new ServiceResult(false, ACCOUNT_LOCKED);
             }
             if (user.activationCode != '' && user.activationCode !== undefined && user.activationCode !== null) {
+                loggingEvent(user, 'SIGN_IN', 'USER', false, user._id, null, 'user is not activated', null);
                 return new ServiceResult(false, ACCOUNT_NOT_ACTIVATED);
             }
             const jwt = authenticate.getToken(user);
+
+            loggingEvent(user, 'SIGN_IN', 'USER', true, user._id, null, '', null);
+
             return new ServiceResult(true, '', { jwt, user });
         } else {
+            loggingEvent(user, 'SIGN_IN', 'USER', false, email, null, '404', null);
             return new ServiceResult(false, ACCOUNT_INVALID);
         }
     }
@@ -63,6 +72,7 @@ module.exports = class AuthService {
 
         const user = await User.findOne({ email });
         if (user) {
+            loggingEvent(user, 'SIGN_UP', 'USER', false, email, null, EMAIL_EXITS, null);
             return new ServiceResult(false, EMAIL_EXITS);
         }
 
@@ -70,6 +80,8 @@ module.exports = class AuthService {
         newUser.password = bcrypt.hashSync(password, 10);
         newUser.activationCode = Math.random().toString(36).slice(2);
         await newUser.save();
+
+        loggingEvent(newUser, 'SIGN_UP', 'USER', true, email, null, '', newUser);
 
         // send email
 
@@ -85,17 +97,22 @@ module.exports = class AuthService {
         const user = await User.findOne({ email });
         if (user && (await bcrypt.compare(password, user ? user.password : ''))) {
             if (user.isLock == 1) {
+                loggingEvent(user, 'ADMIN_LOGIN', 'USER', false, user._id, null, 'user is locked', null);
                 return new ServiceResult(false, ACCOUNT_LOCKED);
             }
             if (user.activationCode != '' && user.activationCode !== undefined && user.activationCode !== null) {
+                loggingEvent(user, 'ADMIN_LOGIN', 'USER', false, user._id, null, 'user is not activated', null);
                 return new ServiceResult(false, ACCOUNT_NOT_ACTIVATED);
             }
             if (user.isAdmin == 0) {
+                loggingEvent(user, 'ADMIN_LOGIN', 'USER', false, user._id, null, 'user is not admin', null);
                 return new ServiceResult(false, USER_NOT_AUTHORIZED);
             }
             const jwt = authenticate.getToken(user);
+            loggingEvent(user, 'ADMIN_LOGIN', 'USER', true, user._id, null, '', null);
             return new ServiceResult(true, '', { jwt, user });
         } else {
+            loggingEvent(user, 'ADMIN_LOGIN', 'USER', false, user._id, null, '404', null);
             return new ServiceResult(false, ACCOUNT_INVALID);
         }
     }
@@ -111,6 +128,7 @@ module.exports = class AuthService {
 
         user.forgotPasswordCode = Math.random().toString(36).slice(2);
         await user.save();
+        loggingEvent(user, 'UPDATE', 'USER', null, 'FORGOT_PASSWORD');
         // send email
 
         const resetPasswordLink = CLIENT_URL + `/auth/reset_password?forgotPasswordCode=${user.forgotPasswordCode}`;
@@ -143,6 +161,7 @@ module.exports = class AuthService {
         user.password = bcrypt.hashSync(password, 10);
         user.forgotPasswordCode = '';
         await user.save();
+        loggingEvent(user, 'UPDATE', 'USER', null, 'RESET_PASSWORD');
         return new ServiceResult(true, PASSWORD_RESET);
     }
 
@@ -180,6 +199,7 @@ module.exports = class AuthService {
         }
         user.activationCode = '';
         await user.save();
+        loggingEvent(user, 'UPDATE', 'USER', null, 'ACTIVATION_ACCOUNT');
         return new ServiceResult(true, ACCOUNT_ACTIVATED, { email: user.email });
     }
 };

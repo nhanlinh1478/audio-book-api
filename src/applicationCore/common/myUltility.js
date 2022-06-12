@@ -20,7 +20,33 @@ async function cloudinaryUploader(file, type = 'video') {
     });
     return uploadResponse.url;
 }
+
+function loggingEvent(
+    object,
+    action,
+    entity,
+    status = true,
+    find = null,
+    createdBy = null,
+    message = '',
+    create = null,
+) {
+    if (object && typeof object.log === 'function') {
+        const data = {
+            action,
+            entity,
+            status,
+            find,
+            createdBy,
+            message,
+            create,
+        };
+        object.log(data);
+    }
+    return;
+}
 module.exports = {
     validURL,
     cloudinaryUploader,
+    loggingEvent,
 };

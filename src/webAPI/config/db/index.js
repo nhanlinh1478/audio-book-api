@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { MONGODB_URL } = require('../env');
+mongoose.plugin(require('../../../webAPI/utils/diff-plugin'));
 
 async function connect() {
     try {
