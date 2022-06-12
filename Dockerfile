@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Pull Docker Hub base image
 FROM node:lts
 # Set working directory
@@ -8,18 +7,5 @@ COPY package.json ./
 RUN yarn
 # Copy app to container
 COPY . .
-# Run the "dev" script in package.json
-CMD ["yarn", "dev"]
-=======
-FROM node:alpine
-
-WORKDIR /usr/app
-
-COPY ./ ./
-
-RUN yarn install
-
-EXPOSE 8000
-
+# Run the "start" script in package.json
 CMD ["yarn", "start"]
->>>>>>> event-sourcing
